@@ -1,8 +1,11 @@
+goldbachList :: Int -> Int -> [(Int, Int)]
+goldbachList l r = foldl (\acc x -> acc ++ [goldbach x]) [] [x | x <- [l..r], even x]
+
 goldbach :: Int -> (Int, Int)
 goldbach n
     | n<=0 = error ("Pleas insert positive numbers.")
     | even n = goldbach' 2 n
-    | otherwise = error ("Goldback conjetures only applies to even numbers.")
+    | otherwise = error ("Goldback conjeture only applies to even numbers.")
 
 goldbach' :: Int -> Int -> (Int, Int)
 goldbach' curr n 
