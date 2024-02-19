@@ -1,23 +1,27 @@
---This code is not correct but have some useful functions to complete the problem
-
 import Data.List
 
 huffman :: [(Char, Int)] -> [(Char, String)]
-huffman f = getHuffmanCodes (createHuffmanTree  f) [] []
+huffman f = sort $ getHuffmanCodes (createHuffmanTree $ sortFreqs f) [] []
 data HuffmanTree = Node Int HuffmanTree HuffmanTree | Leaf Int Char deriving (Show)
 
-createHuffmanTree :: [(Char,Int)] -> HuffmanTree
-createHuffmanTree c = foldl addNode (toLeaf $ head c') (tail c')
-                    where c' = sortBy sortAlg c
+createHuffmanTree :: [(Char, Int)] -> HuffmanTree
+createHuffmanTree = buildTree . map (\(c, f) -> Leaf f c) . sortFreqs
 
-toLeaf :: (Char, Int) -> HuffmanTree
-toLeaf elem = Leaf (snd elem) (fst elem)
+sortFreqs :: [(Char, Int)] -> [(Char, Int)]
+sortFreqs = sortBy sortAlg
 
-addNode :: HuffmanTree -> (Char, Int) -> HuffmanTree
-addNode root elem = if getWeight root > snd elem  
-                    then Node  sum' (toLeaf elem) root 
-                    else Node sum' root (toLeaf elem)
-                    where sum' = (getWeight root + snd elem)
+buildTree :: [HuffmanTree] -> HuffmanTree
+buildTree [tree] = tree
+buildTree (tree1:tree2:trees) = buildTree $ insertTree (mergeTrees tree1 tree2) trees
+    where
+        insertTree :: HuffmanTree -> [HuffmanTree] -> [HuffmanTree]
+        insertTree t [] = [t]
+        insertTree t (x:xs)
+            | getWeight t <= getWeight x = t : x : xs
+            | otherwise = x : insertTree t xs
+
+mergeTrees :: HuffmanTree -> HuffmanTree -> HuffmanTree
+mergeTrees t1 t2 = Node (getWeight t1 + getWeight t2) t1 t2
 
 getWeight :: HuffmanTree -> Int
 getWeight (Node w _ _) = w 
