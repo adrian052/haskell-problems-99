@@ -18,3 +18,7 @@ tree5 = Node 'a' [
 nnodes :: Tree a -> Int
 nnodes (Node a []) = 1
 nnodes (Node a xs) = foldl (\acc x -> acc+(nnodes x)) 1 xs 
+
+treeToString :: Tree Char -> String
+treeToString (Node a []) = [a] ++ "^"
+treeToString (Node a children) = [a] ++ concatMap treeToString children ++ "^"
